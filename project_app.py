@@ -89,7 +89,6 @@ def logout():
 
 @app.route('/')
 def home():
-    return "Hello, Render!"
     if 'logged_in' not in session:
         
         conn = sqlite3.connect('cars.db')
