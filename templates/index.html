@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='st.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEM END</title>
+</head>
+<body>
+    <header>
+        <div class="logo">BigBoyToyz
+            <img src="{{ url_for('static', filename='bg.jpg') }}" alt="Logo" class="nav-logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">Categories</a></li>
+                <li><a href="#post-ad">Post Ad</a></li>
+                <li><a href="#">Contact</a></li>
+                {% if not is_logged_in %}
+                    <li><a href="{{ url_for('login') }}" ><img src="{{ url_for('static', filename='log-in.png') }}" alt="Login"></a></li>
+                {% else %}
+                    <li><a href="{{ url_for('logout') }}"><img src="{{ url_for('static', filename='log-in.png') }}" alt="Logout"></a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="search-bar">
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Search for cars, brands and more">
+            <button type="submit">Search</button>
+        </form>
+        <form action="/search" method="get" style="display:inline;">
+            <input type="hidden" name="query" value="{{ request.args.get('query', '') }}">
+            <label for="sort">Sort by Price:</label>
+            <select name="sort" id="sort">
+                <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Ascending</option>
+                <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Descending</option>
+            </select>
+            <button type="submit">Sort</button>
+        </form>
+    </section>
+
+    <section class="slideshow-container">
+        <div class="slideshow">
+            <div class="slide">
+                <img src="{{ url_for('static', filename='MW1.jpg') }}" alt="Slide 1">
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='GTA51.jpg') }}" alt="Slide 2">
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='Car3.jpg') }}" alt="Slide 3">
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='MW2.jpg') }}" alt="Slide 4">
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='F1.png') }}" alt="Slide 5">
+            </div>
+        </div>
+    </section>
+
+    <section class="product-listing">
+        <h2>Explore Cars</h2>
+        <table>
+            <tr>
+                <th>Car_ID</th>
+                <th>Model</th>
+                <th>Description</th>
+                <th>Price/Day</th>
+                <th>Category</th>
+                <th>Contact number</th>
+                {% if is_logged_in %}
+                    <th>Action</th>
+                {% endif %}
+            </tr>
+            {% for c in cars %}
+            <tr>
+                <td>{{ c[0] }}</td>
+                <td>{{ c[1] }}</td>
+                <td>{{ c[2] }}</td>
+                <td>{{ c[3] }}</td>
+                <td>{{ c[4] }}</td>
+                <td>{{ c[5] }}</td>
+                {% if is_logged_in %}
+                    <td><a href="/delete/{{ c[0] }}" id="del">Delete</a>
+                    <a href="/view_json/{{ c[0] }}" id="open">Open</a></td>
+                {% else %}
+                    <td>You must be logged in to delete.</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    {% if is_logged_in %}
+        <section id="post-ad" class="post-ad">
+            <h1>Post Your Ad</h1>
+            <form action="/add_car" method="post" enctype="multipart/form-data">
+                <label for="model">Model</label>
+                <input type="text" id="model" name="model" required placeholder="Enter car name">
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required placeholder="Enter Description of the car" maxlength="255"></textarea>
+
+                <label for="price">Price Per Day</label>
+                <input type="number" id="price" name="price" required placeholder="Enter Price per day">
+
+                <label for="contact">Contact Number</label>
+                <input type="number" id="contact" name="contact" required placeholder="Enter your contact number">
+
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    <option value="Sedan">Sedan</option>
+                    <option value="Coupe">Coupe</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Mini-Van">Mini-Van</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Other">Others</option>
+                </select>
+
+                <button type="submit">Post Ad</button>
+            </form>
+        </section>
+    {% else %}
+        <p>You must be logged in to post an ad.</p>
+    {% endif %}
+
+    <footer>
+        <p>&copy; 2024 BigBoyToyz CarRentals.co App. All rights reserved.</p>
+    </footer>
+</body>
+</html>
